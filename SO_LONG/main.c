@@ -6,7 +6,7 @@
 /*   By: aokur <aokur@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/05 16:09:05 by aokur             #+#    #+#             */
-/*   Updated: 2025/10/10 02:07:54 by aokur            ###   ########.fr       */
+/*   Updated: 2025/10/10 02:42:09 by aokur            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,15 @@
 typedef struct s_game {
 	void *mlx;
 	void *win;
-	void *img;
+
+	char **map;
+	int map_height;
+	int map_width;
+
+	void *img_floor;
+	void *img_player;
+	void *img_wall;
+
 	int x;
 	int y;
 } t_game;
@@ -230,7 +238,7 @@ int key_hook(int keycode, t_game *game)
 {
 	if (keycode == 65307)
 	{
-		mlx_destroy_image(game->mlx, game->img);
+		mlx_destroy_image(game->mlx, game->img_player);
 		mlx_destroy_window(game->mlx, game->win);
 		mlx_destroy_display(game->mlx);
 		free(game->mlx);
@@ -252,7 +260,7 @@ int update(void *param)
 	t_game *game = (t_game *)param;
 
 	mlx_clear_window(game->mlx, game->win);
-	mlx_put_image_to_window(game->mlx, game->win, game->img, game->x, game->y);
+	mlx_put_image_to_window(game->mlx, game->win, game->img_player, game->x, game->y);
 	return (0);
 }
 
@@ -268,7 +276,7 @@ int map_height(char *param)
 	if (fd < 0)
 	{
 		printf("Error");
-		return (NULL);
+		return (0);
 	}
 	
 	while((line = get_next_line(fd)) != NULL)
@@ -364,8 +372,40 @@ int	is_map_closed(char **map)
 
 int	is_map_valid(char **map)
 {
-	
+	int	is_p;
+	int	is_b;
+	int	is_s;
+	int	i;
+	int	j;
+
+	i = 0;
+	is_p = 0;
+	while (map[i] != NULL)
+	{
+		j = 0;
+		while(map[i][j] != '\0')
+		{
+			if (map[i][j] == 'P')
+				is_p++;
+			else if (map[i][j] != '1' && map[i][j] != '0' && map[i][j] != 'P')
+				return (0);
+			j++;
+		}
+		i++;
+	}
+	if (is_p != 1)
+		return (0);
 }
+
+//int	draw_map(char *param)
+//{
+//	t_game *game = (t_game *)param;
+//	int	i;
+//	int	j;
+
+//	i = 0;
+//	while ()
+//}
 
 int main()
 {
@@ -378,7 +418,7 @@ int main()
 	g.y = HEIGHT/2;
 	g.mlx = mlx_init();
 	g.win = mlx_new_window(g.mlx, WIDTH, HEIGHT, "Pac Man Alpha Beta Demo");
-	g.img = mlx_xpm_file_to_image(g.mlx, "pacman.xpm", &width, &height);
+	g.img_player = mlx_xpm_file_to_image(g.mlx, "pacman.xpm", &width, &height);
 	
 
 	mlx_key_hook(g.win, key_hook, &g);
