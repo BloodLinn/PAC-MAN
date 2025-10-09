@@ -6,7 +6,7 @@
 /*   By: aokur <aokur@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/05 16:09:05 by aokur             #+#    #+#             */
-/*   Updated: 2025/10/10 01:08:01 by aokur            ###   ########.fr       */
+/*   Updated: 2025/10/10 02:07:54 by aokur            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,18 +337,34 @@ int	is_map_closed(char **map)
 {
 	int	j;
 	int	i;
+	int w;
 
 	i = 0;
-	j = 0;
 	while (map[i] != NULL)
 		i++;
-	while ((map[0][j] == '1') && map[i][j] == '1')
-		j++;
 	j = 0;
-	i = gnl_strlen(map[0]);
-	while ((map[j][0] == '1') && map[j][i] == '1')
+	//genişlik
+	while (map[0][j] != '\0')
+	{
+		if (((map[0][j] != '1') || (map[i - 1][j] != '1')))
+			return (0);
 		j++;
+	}
+	j = 0;
+	w = gnl_strlen(map[0]);
+	//yükseklik
+	while (j < i)
+	{
+		if (map[j][w - 1] != '1' || map[j][0] != '1')
+			return (0);
+		j++;
+	}
 	return (1);
+}
+
+int	is_map_valid(char **map)
+{
+	
 }
 
 int main()
